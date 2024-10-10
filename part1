@@ -1,0 +1,144 @@
+<?php
+include 'db.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $nome = $_POST['nome'];
+    $idade = $_POST['idade'];
+    $email = $_POST['email'];
+    $curso = $_POST['curso'];
+
+    $sql = "INSERT INTO alunos (nome, idade, email, curso) VALUES ('$nome', $idade, '$email', '$curso')";
+    
+    if ($conn->query($sql) === TRUE) {
+        header("Location: index.php?msg=Cadastro realizado com sucesso!");
+    } else {
+        echo "Erro: " . $sql . "<br>" . $conn->error;
+    }
+}
+?>
+
+<?php
+$servername = "localhost";
+$username = "seu_usuario"; // Substitua pelo seu usuário
+$password = "sua_senha"; // Substitua pela sua senha
+$dbname = "escola";
+
+// Criar conexão
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verificar conexão
+if ($conn->connect_error) {
+    die("Conexão falhou: " . $conn->connect_error);
+}
+?>
+
+<?php
+include 'db.php';
+
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $sql = "DELETE FROM alunos WHERE id=$id";
+    
+    if ($conn->query($sql) === TRUE) {
+        header("Location: index.php?msg=Aluno excluído com sucesso!");
+    } else {
+        echo "Erro ao excluir: " . $conn->error;
+    }
+}
+?>
+
+<?php include 'db.php'; ?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Cadastro de Alunos</title>
+</head>
+<body>
+    <h1>Cadastro de Alunos</h1>
+    <form action="cadastro.php" method="POST">
+        <label for="nome">Nome:</label>
+        <input type="text" name="nome" required>
+
+        <label for="idade">Idade:</label>
+        <input type="number" name="idade" required>
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" required>
+
+        <label for="curso">Curso:</label>
+        <input type="text" name="curso" required>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <h2>Alunos Cadastrados</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Idade</th>
+            <th>Email</th>
+            <th>Curso</th>
+            <th>Ações</th>
+        </tr>
+        <?php
+        $result = $conn->query("SELECT * FROM alunos");
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>
+                    <td>{$row['id']}</td>
+                    <td>{$row['nome']}</td>
+                    <td>{$row['idade']}</td>
+                    <td>{$row['email']}</td>
+                    <td>{$row['curso']}</td>
+                    <td><a href='deletar.php?id={$row['id']}'>Excluir</a></td>
+                  </tr>";
+        }
+        ?>
+    </table>
+</body>
+</html>
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+a {
+    color: red;
+}
